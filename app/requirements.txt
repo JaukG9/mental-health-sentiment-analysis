@@ -1,12 +1,5 @@
-<<<<<<< HEAD
 gradio
 torch
 transformers
 scikit-learn
-=======
-gradio
-torch
-transformers
-scikit-learn
->>>>>>> 8ba3f285aa1596262b58bdd7e07cd700250eb022
 numpy
