@@ -16,7 +16,14 @@
         <h1>Mental Health Sentiment Analysis</h1>
         <p class="subtitle">Enter a statement below to classify it.</p>
 
-        <textarea id="inputText" placeholder="Type or paste your statement here..."></textarea>
+        <div class="textarea-container">
+            <textarea id="inputText" placeholder="Type or paste your statement here..."></textarea>
+            <div class="char-counter">
+                <span id="char-count">0</span>
+            </div>
+        </div>
+        
+        <div id="length-warning" class="length-warning hidden">Note: Short texts may be classified at a lower accuracy.</div>
         <button id="btn" onclick="classify()">Classify Sentiment</button>
 
         <div id="result"></div>

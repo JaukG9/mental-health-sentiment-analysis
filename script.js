@@ -1,7 +1,7 @@
 async function classify(){
-    const text   = document.getElementById("inputText").value.trim();
+    const text = document.getElementById("inputText").value.trim();
     const result = document.getElementById("result");
-    const btn    = document.getElementById("btn");
+    const btn = document.getElementById("btn");
     
     if(!text){
         result.innerHTML = '<p class="error">Please enter some text first.</p>';
@@ -45,4 +45,19 @@ async function classify(){
     }finally{
         btn.disabled = false;
     }
+    
+    const textLength = textarea.value.trim().length;
+    if(textLength > 0 && textLength < 100){
+        warning.classList.remove("hidden");
+    }
 }
+
+const textarea = document.getElementById("inputText");
+const charCount = document.getElementById("char-count");
+const warning = document.getElementById("length-warning");
+
+textarea.addEventListener('input', () => {
+    const textLength = textarea.value.trim().length;
+    charCount.textContent = textLength;
+    warning.classList.add("hidden");
+});
