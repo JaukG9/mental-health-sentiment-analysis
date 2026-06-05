@@ -5,6 +5,7 @@
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Gradio](https://img.shields.io/badge/Interface-Gradio-orange)
 ![HuggingFace](https://img.shields.io/badge/Hosted%20on-HuggingFace%20Spaces-yellow)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-brightgreen)](https://jaukg9.github.io/mental-health-sentiment-analysis)
 
 ---
 
@@ -30,7 +31,7 @@ Read the full paper: *Soon to be published*
 
 The pipeline is built on a deliberate two-stage hybrid design
 
-1. A fine-tuned [**BERT**](## "Bidirectional Encoder Representations from Transformers") model reads the input and compresses it into a 768-dimensional embedding, a dense numerical vector that captures deep contextual and semantic relationships within the text.
+1. A fine-tuned BERT model reads the input and compresses it into a 768-dimensional embedding, a dense numerical vector that captures deep contextual and semantic relationships within the text.
 2. The 768-dimensional vector is handed off to a lightweight **Random Forest classifier**, which produces the final category prediction along with probability scores for each mental health status.
 
 The design intentionally did not use BERT end-to-end for the final classification, as it introduces significant latency, making it unsuitable for real-world deployment. By fixing BERT as a static feature extractor and letting Random Forest make the actual prediction, accuracy is preserved while making the system orders of magnitude cheaper to run.
