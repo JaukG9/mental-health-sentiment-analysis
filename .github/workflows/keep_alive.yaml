@@ -1,0 +1,15 @@
+name: Keep Hugging Face Space Alive
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Space
+        run: |
+          curl -L -s -o /dev/null -w "%{http_code}" http://ayaangos-mental-health-sentiment-analysis.hf.space/
