@@ -1,4 +1,4 @@
-name: Keep Hugging Face Space Alive
+name: Keep HF Space Alive
 
 on:
   schedule:
