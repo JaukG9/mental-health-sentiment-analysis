@@ -1,3 +1,24 @@
+const FB_URL = 'https://mental-health-status-analysis-default-rtdb.firebaseio.com/classifyCount.json'
+
+async function incrementCount(){
+    const res = await fetch(FB_URL);
+    const current = (await res.json()) || 0;
+    const updated = current + 1;
+    await fetch(FB_URL, {
+        method: 'PUT',
+        body: JSON.stringify(updated)
+    });
+    document.getElementById('use-count').textContent = `This tool has been used ${updated.toLocaleString()} times.`;
+}
+
+async function loadCount(){
+    const res = await fetch(FB_URL);
+    const count = (await res.json()) || 0;
+    document.getElementById('use-count').textContent = `This tool has been used ${count.toLocaleString()} times.`;
+    console.log(count);
+}
+loadCount()
+
 async function classify(){
     const text = document.getElementById("inputText").value.trim();
     const result = document.getElementById("result");
@@ -40,6 +61,8 @@ async function classify(){
         }
 
         result.innerHTML = html;
+
+        await incrementCount();
     }catch(err){
         result.innerHTML = `<p class="error">Error: ${err.message}</p>`;
     }finally{
