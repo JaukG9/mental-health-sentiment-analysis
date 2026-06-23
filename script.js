@@ -1,3 +1,20 @@
+const originalFetch = window.fetch;
+window.fetch = async (...args) => {
+    let [resource, config] = args;
+    
+    if (resource instanceof Request && resource.url.includes('hf.space')) {
+        return originalFetch(new Request(resource, { credentials: 'omit' }));
+    }
+    
+    if (typeof resource === 'string' && resource.includes('hf.space')) {
+        config = config || {};
+        config.credentials = 'omit';
+        return originalFetch(resource, config);
+    }
+    
+    return originalFetch(...args);
+};
+
 const FB_URL = 'https://mental-health-status-analysis-default-rtdb.firebaseio.com/classifyCount.json'
 
 async function incrementCount(){
@@ -15,7 +32,6 @@ async function loadCount(){
     const res = await fetch(FB_URL);
     const count = (await res.json()) || 0;
     document.getElementById('use-count').textContent = `This tool has been used ${count.toLocaleString()} times.`;
-    console.log(count);
 }
 loadCount()
 
