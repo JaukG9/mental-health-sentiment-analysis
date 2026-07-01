@@ -97,7 +97,7 @@ To evaluate the boundary limitations and pragmatic capabilities of hybrid system
 ```bash
 git clone https://github.com/JaukG9/mental-health-sentiment-analysis.git
 cd mental-health-sentiment-analysis
-pip install -r requirements.txt
+pip install -r app/requirements.txt
 ```
 
 > **Note:** The fine-tuned BERT model weights are hosted on Hugging Face and are downloaded automatically on first run. A GPU is recommended for faster BERT inference but is not required.
