@@ -11,10 +11,12 @@
 
 ## Demos
 
-![Stress Classification Demo](app/assets/demo-stress.png)  
+<img src="app/assets/demo-stress.png" alt="Stress Classification Demo" width="50%">
+
 *Stress Classification: The model correctly identifies stressed ideation with 55.6% confidence*
 
-![Suicidal Classification Demo](app/assets/demo-suicidal.png)  
+<img src="app/assets/demo-suicidal.png" alt="Suicidal Classification Demo" width="50%">
+
 *Suicidal Classification: The model correctly identifies suicidal ideation with 91.7% confidence*
 
 ---
@@ -69,11 +71,15 @@ The dataset has a notable class imbalance, with Normal (~31%) and Depression (~2
 | Hybrid System | 84.72%        | [Hybrid Confusion Matrix](#hybrid-model-confusion-matrix) |
 
 #### BERT Model Confusion Matrix
-![BERT Confusion Matrix](app/assets/bert-confusion-matrix.png)
+
+<img src="app/assets/bert-confusion-matrix.png" alt="BERT Confusion Matrix" width="50%">
+
 *The model achieves 84.87% accuracy on the test set, with the only significant class confusion coming from the comorbid statuses of `Depression` and `Suicidal`*
 
 #### Hybrid Model Confusion Matrix
-![Hybrid Confusion Matrix](app/assets/hybrid-confusion-matrix.png)
+
+<img src="app/assets/hybrid-confusion-matrix.png" alt="Hybrid Confusion Matrix" width="50%">
+
 *The Random Forest trained on BERT embeddings achieves 84.72% accuracy on the test set. Similar to the BERT interface, the only significant class confusion comes from the comorbid statuses of `Depression` and `Suicidal`*
 
 The deployed hybrid system, consisting of the Random Forest trained on BERT embeddings, achieves 84.72% accuracy, only a 0.15% accuracy drop compared to the pure BERT interface, while significantly reducing inference latency. The emost common misclassifications for both models occur between `Depression` and `Suicidal`, suggesting that the linguistic patterns between these two classes are inherently similar, consistent with teh established psychiatric literature on the comorbidity of depressive and suicidal states.
@@ -87,7 +93,7 @@ To evaluate the boundary limitations and pragmatic capabilities of hybrid system
 | Idiomatic | I am absolutely killing it at my new job! | Depression (36%) | Incorectly misconstrues "killing" in a negative context |
 | Sarcastic | Oh great, another massive panic attack at 3 AM. I am absolutely loving my life right now, truly living the dream. | Stress (25%) | Correctly overlooks sarcastic language, such as "great" and "loving" |
 | Temporal | Two years ago, I was profoundly depressed and had constant suicidal thoughts, but thankfully I got professional help and today I feel incredibly happy, healthy, and full of life. | Normal (64%) | Correctly parses the chronological arc rather than flagging early, negative tokens |
-| Minimized | I don’t mean to bother anyone, and I know everyone here has much bigger problems than me, but I’ve been feeling a bit empty lately. Sorry for wasting your time. | Stress (61%) | Incorrectly construes apologetic, self-diminishing language as stress instead of depression |
+| Minimized | I don't mean to bother anyone, and I know everyone here has much bigger problems than me, but I've been feeling a bit empty lately. Sorry for wasting your time. | Stress (61%) | Incorrectly construes apologetic, self-diminishing language as stress instead of depression |
 
 ---
 
