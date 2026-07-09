@@ -142,7 +142,7 @@ If you use this project or build on it, please cite the paper and dataset:
 
 **Paper**
 ```
-To be published
+Under review for submission to the International Journal of Secondary Computing and Applications Research
 ```
 
 **Dataset**
