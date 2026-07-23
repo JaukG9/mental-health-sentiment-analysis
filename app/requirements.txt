@@ -1,5 +1,4 @@
 gradio
-torch
+onnxruntime
 transformers
-scikit-learn
 numpy
