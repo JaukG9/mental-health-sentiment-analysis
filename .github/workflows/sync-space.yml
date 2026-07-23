@@ -26,7 +26,7 @@ jobs:
           api.upload_folder(
               folder_path="app",
               path_in_repo=".",
-              repo_id="YOUR_USERNAME/YOUR_SPACE",
+              repo_id="AyaanGos/mental-health-sentiment-analysis",
               repo_type="space",
               commit_message=f"Sync from GitHub {os.environ['GITHUB_SHA'][:7]}",
               delete_patterns="*",
