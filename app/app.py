@@ -1,6 +1,5 @@
 import json
 import os
-
 import gradio as gr
 import numpy as np
 import onnxruntime as ort
@@ -71,8 +70,7 @@ ARTICLE = (
     "- **International:** [findahelpline.com](https://findahelpline.com)\n\n"
     "This tool is a research prototype trained on public social-media text. Its "
     "labels are derived from posting venue rather than clinical assessment, and it "
-    "makes mistakes — particularly on sarcasm, idioms, and understated distress. "
-    "Do not use it to make care decisions."
+    "can make mistakes."
 )
 
 demo = gr.Interface(

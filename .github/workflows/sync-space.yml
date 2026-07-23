@@ -1,0 +1,34 @@
+name: Sync app/ to Hugging Face Space
+on:
+  push:
+    branches: [main]
+    paths: ['app/**', '.github/workflows/sync-space.yml']
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install huggingface_hub
+      - env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          api.upload_folder(
+              folder_path="app",
+              path_in_repo=".",
+              repo_id="AyaanGos/mental-health-sentiment-analysis",
+              repo_type="space",
+              commit_message=f"Sync from GitHub {os.environ['GITHUB_SHA'][:7]}",
+              delete_patterns="*",
+          )
+          PY
