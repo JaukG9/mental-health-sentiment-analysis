@@ -58,7 +58,7 @@ def predict(text: str) -> dict:
 
 
 DESCRIPTION = (
-    "Research prototype — **not a diagnostic tool.** This model screens text for "
+    "Research prototype, **not a diagnostic tool.** This model screens text for "
     "possible indicators of psychological distress and is not a substitute for "
     "assessment by a licensed clinician."
 )
@@ -82,7 +82,7 @@ demo = gr.Interface(
     title="Mental Health Text Screening (Research Prototype)",
     description=DESCRIPTION,
     article=ARTICLE,
-    allow_flagging="never",
+    flagging_mode="never",
 )
 
 if __name__ == "__main__":
