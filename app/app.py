@@ -1,53 +1,91 @@
+import json
+import os
+
 import gradio as gr
 import numpy as np
-import pandas as pd
-import torch
-import pickle
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import onnxruntime as ort
+from transformers import AutoTokenizer
 
-# Label mappings from saved encoder
-with open("label_encoder.pkl", "rb") as f:
-    le = pickle.load(f)
-id2label = {i: label for i, label in enumerate(le.classes_)}
-label2id = {label: i for i, label in enumerate(le.classes_)}
+MODEL_DIR = "./distilbert_onnx_int8"
+MAX_LEN = 128
 
-# Load models
-model_name = "./bert_sentiment_model"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+# Locate the quantized graph
+onnx_files = [f for f in os.listdir(MODEL_DIR) if f.endswith(".onnx")]
+if not onnx_files:
+    raise FileNotFoundError(f"No .onnx file found in {MODEL_DIR}")
+onnx_name = "model_quantized.onnx" if "model_quantized.onnx" in onnx_files else onnx_files[0]
+onnx_path = os.path.join(MODEL_DIR, onnx_name)
 
-bert_model = AutoModelForSequenceClassification.from_pretrained(
-    model_name,
-    num_labels=len(id2label),
-    id2label=id2label,
-    label2id=label2id,
+# Labels from the model config
+with open(os.path.join(MODEL_DIR, "config.json")) as f:
+    config = json.load(f)
+id2label = {int(k): v for k, v in config["id2label"].items()}
+LABELS = [id2label[i] for i in range(len(id2label))]
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
+
+session_options = ort.SessionOptions()
+session_options.intra_op_num_threads = max(1, os.cpu_count() or 1)
+session = ort.InferenceSession(
+    onnx_path, session_options, providers=["CPUExecutionProvider"]
 )
-bert_model.eval()
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-bert_model.to(device)
+INPUT_NAMES = {i.name for i in session.get_inputs()}
 
-with open("random_forest_bert_model.pkl", "rb") as f:
-    rf_model = pickle.load(f)
+print(f"Loaded {onnx_name} | labels: {LABELS}")
 
-# Inference
+HIGH_RISK_LABELS = {"Suicidal"}
+RISK_THRESHOLD = 0.40
+
+
+def _softmax(x):
+    e = np.exp(x - x.max(axis=-1, keepdims=True))
+    return e / e.sum(axis=-1, keepdims=True)
+
+
 def predict(text: str) -> dict:
-    inputs = tokenizer(
-        text, return_tensors="pt", truncation=True,
-        padding=True, max_length=512
-    ).to(device)
-    with torch.no_grad():
-        outputs = bert_model.base_model(**inputs)
-        embedding = outputs.last_hidden_state[:, 0, :].cpu().numpy()
+    if not text or not text.strip():
+        return {label: 0.0 for label in LABELS}
 
-    pred_id = rf_model.predict(embedding)[0]
-    probs = rf_model.predict_proba(embedding)[0]
-    return {id2label[1]: float(probs[i]) for i in range(len(id2label))}
+    encoded = tokenizer(
+        text, return_tensors="np", truncation=True, padding=True, max_length=MAX_LEN
+    )
 
-# Gradio UI + auto REST API
-gr.Interface(
+    feed = {k: v.astype(np.int64) for k, v in encoded.items() if k in INPUT_NAMES}
+
+    logits = session.run(None, feed)[0]
+    probs = _softmax(logits)[0]
+
+    return {LABELS[i]: float(probs[i]) for i in range(len(LABELS))}
+
+
+DESCRIPTION = (
+    "Research prototype — **not a diagnostic tool.** This model screens text for "
+    "possible indicators of psychological distress and is not a substitute for "
+    "assessment by a licensed clinician."
+)
+
+ARTICLE = (
+    "### If you or someone you know needs support\n"
+    "- **US:** call or text **988** (Suicide & Crisis Lifeline), or text **HOME** to **741741**\n"
+    "- **UK & ROI:** call **116 123** (Samaritans)\n"
+    "- **International:** [findahelpline.com](https://findahelpline.com)\n\n"
+    "This tool is a research prototype trained on public social-media text. Its "
+    "labels are derived from posting venue rather than clinical assessment, and it "
+    "makes mistakes — particularly on sarcasm, idioms, and understated distress. "
+    "Do not use it to make care decisions."
+)
+
+demo = gr.Interface(
     fn=predict,
-    inputs=gr.Textbox(label="Statement", lines=4,
-                      placeholder="Type a statement to classify..."),
-    outputs=gr.Label(label="Classification", num_top_classes=7),
-    title="Mental Health Sentiment Analysis",
-    description="BERT Embeddings + Random Forest Classifier"
-).launch()
+    inputs=gr.Textbox(
+        label="Statement", lines=4, placeholder="Type a statement to classify..."
+    ),
+    outputs=gr.Label(label="Screening result", num_top_classes=7),
+    title="Mental Health Text Screening (Research Prototype)",
+    description=DESCRIPTION,
+    article=ARTICLE,
+    allow_flagging="never",
+)
+
+if __name__ == "__main__":
+    demo.launch()
