@@ -82,7 +82,7 @@ async function classify(){
         const suicidalItem = confidences.find(item => item.label === "Suicidal");
         const suicidalProb = suicidalItem ? suicidalItem.confidence : 0;
         const banner = document.getElementById("crisis-banner");
-        if (HIGH_RISK.has(topLabel) || suicidalProb >= 0.40) {
+        if (HIGH_RISK.has(topLabel) || suicidalProb >= 0.25) {
             banner.style.display = "block";
         } else {
             banner.style.display = "none";   // hide again on a later low-risk input
