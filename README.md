@@ -12,11 +12,11 @@
 
 ## Demos
 
-<img src="app/assets/demo-stress.png" alt="Stress Classification Demo" width="50%">
+<img src="app/assets/clinical-prescreening.png" alt="Stress Classification Demo" width="50%">
 
 *Stress Classification: the deployed model flags stress-related distress and surfaces a probability breakdown across all seven classes.*
 
-<img src="app/assets/demo-suicidal.png" alt="Suicidal Classification Demo" width="50%">
+<img src="app/assets/digital-content.png" alt="Suicidal Classification Demo" width="50%">
 
 *Suicidal Classification: high-risk results additionally display crisis resources, shown whenever the model assigns at least 25% probability to the Suicidal class.*
 
@@ -129,7 +129,7 @@ An externally authored suite of 50 probes (10 each for hyperbole, idiom, sarcasm
 
 Every configuration is overconfident (displayed confidence exceeds observed accuracy across most of the range). The deployed model assigns ≥99% confidence to 38.2% of predictions while being correct on 82% overall, though it never displays exactly 100% confidence (max observed: 99.92%).
 
-<img src="app/assets/reliability.png" alt="Reliability Figure" width="50%">
+<img src="app/assets/fig_reliability.png" alt="Reliability Figure" width="50%">
 
 ---
 
